@@ -2,17 +2,10 @@
 
 use term::{Term, abs, app};
 use term::Term::*;
-use self::Error::*;
 use church::booleans::{tru, fls};
+use church::ChurchError;
+use church::ChurchError::*;
 use combinators::z;
-
-/// An error that can be returned when a method intended for a Church number is applied to something
-/// different.
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    /// the term is not a Church number
-    NotANum
-}
 
 /// Produces a Church-encoded number zero.
 ///
@@ -663,7 +656,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church number.
-    pub fn value(&self) -> Result<usize, Error> {
+    pub fn value(&self) -> Result<usize, ChurchError> {
         if let Ok(inner) = self.unabs_ref().and_then(|t| t.unabs_ref()) {
             Ok(try!(inner._value()))
         } else {
@@ -671,7 +664,7 @@ impl Term {
         }
     }
 
-    fn _value(&self) -> Result<usize, Error> {
+    fn _value(&self) -> Result<usize, ChurchError> {
         if let Ok((lhs, rhs)) = self.unapp_ref() {
             if *lhs == Var(2) {
                 Ok(1 + try!(rhs._value()))

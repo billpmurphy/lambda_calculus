@@ -2,16 +2,9 @@
 
 use term::{Term, abs};
 use term::Term::*;
-use self::Error::*;
 use church::booleans::{tru, fls};
-
-/// An error that can be returned when a method intended for a Church pair is applied to something
-/// different.
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    /// the term is not a Church pair
-    NotAPair
-}
+use church::ChurchError;
+use church::ChurchError::*;
 
 /// Produces a Church-encoded pair; applying it to two other terms puts them inside it.
 ///
@@ -112,7 +105,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn unpair(self) -> Result<(Term, Term), Error> {
+    pub fn unpair(self) -> Result<(Term, Term), ChurchError> {
         let candidate = if let Abs(abstracted) = self { *abstracted } else { self };
 
         if let Ok((wrapped_a, b)) = candidate.unapp() {
@@ -143,7 +136,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn unpair_ref(&self) -> Result<(&Term, &Term), Error> {
+    pub fn unpair_ref(&self) -> Result<(&Term, &Term), ChurchError> {
         let candidate = if let Abs(ref abstracted) = *self { abstracted } else { self };
 
         if let Ok((wrapped_a, b)) = candidate.unapp_ref() {
@@ -174,7 +167,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn unpair_mut(&mut self) -> Result<(&mut Term, &mut Term), Error> {
+    pub fn unpair_mut(&mut self) -> Result<(&mut Term, &mut Term), ChurchError> {
         let mut candidate = if let Abs(ref mut abstracted) = *self { abstracted } else { self };
 
         if let Ok((wrapped_a, b)) = candidate.unapp_mut() {
@@ -205,7 +198,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn fst(self) -> Result<Term, Error> {
+    pub fn fst(self) -> Result<Term, ChurchError> {
         Ok(try!(self.unpair()).0)
     }
 
@@ -226,7 +219,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn fst_ref(&self) -> Result<&Term, Error> {
+    pub fn fst_ref(&self) -> Result<&Term, ChurchError> {
         Ok(try!(self.unpair_ref()).0)
     }
 
@@ -248,7 +241,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn fst_mut(&mut self) -> Result<&mut Term, Error> {
+    pub fn fst_mut(&mut self) -> Result<&mut Term, ChurchError> {
         Ok(try!(self.unpair_mut()).0)
     }
 
@@ -269,7 +262,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn snd(self) -> Result<Term, Error> {
+    pub fn snd(self) -> Result<Term, ChurchError> {
         Ok(try!(self.unpair()).1)
     }
 
@@ -290,7 +283,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn snd_ref(&self) -> Result<&Term, Error> {
+    pub fn snd_ref(&self) -> Result<&Term, ChurchError> {
         Ok(try!(self.unpair_ref()).1)
     }
 
@@ -311,7 +304,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church pair.
-    pub fn snd_mut(&mut self) -> Result<&mut Term, Error> {
+    pub fn snd_mut(&mut self) -> Result<&mut Term, ChurchError> {
         Ok(try!(self.unpair_mut()).1)
     }
 }

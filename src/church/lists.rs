@@ -2,20 +2,13 @@
 
 use term::{Term, abs, app};
 use term::Term::*;
-use self::Error::*;
 use church::booleans::{tru, fls};
 use church::pairs::{pair, fst, snd};
 use church::numerals::zero;
+use church::ChurchError;
+use church::ChurchError::*;
 use combinators::z;
 use std::ops::Index;
-
-/// An error that can be returned when a method intended for a Church list is applied to something
-/// different.
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    /// the term is not a Church list
-    NotAList
-}
 
 /// Equivalent to `booleans::fls()`; produces a Church-encoded `nil`, the last link of a
 /// Church list.
@@ -518,7 +511,7 @@ impl Term {
     }
 
     // Returns a reference to the last term of a Church list.
-    fn last_ref(&self) -> Result<&Term, Error> {
+    fn last_ref(&self) -> Result<&Term, ChurchError> {
         if !self.is_pair() { return Err(NotAList) }
 
         let mut last_candidate = self.snd_ref().unwrap(); // safe; ensured above
@@ -560,7 +553,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn uncons(self) -> Result<(Term, Term), Error> {
+    pub fn uncons(self) -> Result<(Term, Term), ChurchError> {
         if !self.is_list() {
             Err(NotAList)
         } else {
@@ -583,7 +576,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn uncons_ref(&self) -> Result<(&Term, &Term), Error> {
+    pub fn uncons_ref(&self) -> Result<(&Term, &Term), ChurchError> {
         if !self.is_list() {
             Err(NotAList)
         } else {
@@ -607,7 +600,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn uncons_mut(&mut self) -> Result<(&mut Term, &mut Term), Error> {
+    pub fn uncons_mut(&mut self) -> Result<(&mut Term, &mut Term), ChurchError> {
         if !self.is_list() {
             Err(NotAList)
         } else {
@@ -629,7 +622,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn head(self) -> Result<Term, Error> {
+    pub fn head(self) -> Result<Term, ChurchError> {
         Ok(try!(self.uncons()).0)
     }
 
@@ -647,7 +640,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn head_ref(&self) -> Result<&Term, Error> {
+    pub fn head_ref(&self) -> Result<&Term, ChurchError> {
         Ok(try!(self.uncons_ref()).0)
     }
 
@@ -665,7 +658,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn head_mut(&mut self) -> Result<&mut Term, Error> {
+    pub fn head_mut(&mut self) -> Result<&mut Term, ChurchError> {
         Ok(try!(self.uncons_mut()).0)
     }
 
@@ -683,7 +676,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn tail(self) -> Result<Term, Error> {
+    pub fn tail(self) -> Result<Term, ChurchError> {
         Ok(try!(self.uncons()).1)
     }
 
@@ -701,7 +694,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn tail_ref(&self) -> Result<&Term, Error> {
+    pub fn tail_ref(&self) -> Result<&Term, ChurchError> {
         Ok(try!(self.uncons_ref()).1)
     }
 
@@ -720,7 +713,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn tail_mut(&mut self) -> Result<&mut Term, Error> {
+    pub fn tail_mut(&mut self) -> Result<&mut Term, ChurchError> {
         Ok(try!(self.uncons_mut()).1)
     }
 
@@ -738,7 +731,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn len(&self) -> Result<usize, Error> {
+    pub fn len(&self) -> Result<usize, ChurchError> {
         let mut inner = self;
         let mut n = 0;
 
@@ -765,7 +758,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list or a `nil()`.
-    pub fn push(self, term: Term) -> Result<Term, Error> {
+    pub fn push(self, term: Term) -> Result<Term, ChurchError> {
         if !self.is_list() && self != nil() { return Err(NotAList) }
 
         Ok(abs(app!(Var(1), term, self)))
@@ -792,7 +785,7 @@ impl Term {
     /// # Errors
     ///
     /// The function will return an error if `self` is not a Church list.
-    pub fn pop(&mut self) -> Result<Term, Error> {
+    pub fn pop(&mut self) -> Result<Term, ChurchError> {
         let (head, tail) = try!(self.clone().uncons()); // TODO: drop clone()?
         *self = tail;
 
