@@ -1,13 +1,21 @@
 //! [Church single-pair lists](https://en.wikipedia.org/wiki/Church_encoding#One_pair_as_a_list_node)
 
-use term::{Term, Error, abs, app};
+use term::{Term, abs, app};
 use term::Term::*;
-use term::Error::*;
+use self::Error::*;
 use church::booleans::{tru, fls};
 use church::pairs::{pair, fst, snd};
 use church::numerals::zero;
 use combinators::z;
 use std::ops::Index;
+
+/// An error that can be returned when a method intended for a Church list is applied to something
+/// different.
+#[derive(Debug, PartialEq)]
+pub enum Error {
+    /// the term is not a Church list
+    NotAList
+}
 
 /// Equivalent to `booleans::fls()`; produces a Church-encoded `nil`, the last link of a
 /// Church list.
@@ -513,7 +521,7 @@ impl Term {
     fn last_ref(&self) -> Result<&Term, Error> {
         if !self.is_pair() { return Err(NotAList) }
 
-        let mut last_candidate = try!(self.snd_ref());
+        let mut last_candidate = self.snd_ref().unwrap(); // safe; ensured above
 
         while let Ok(second) = last_candidate.snd_ref() {
             last_candidate = second;
@@ -556,7 +564,7 @@ impl Term {
         if !self.is_list() {
             Err(NotAList)
         } else {
-            self.unpair()
+            Ok(self.unpair().unwrap())
         }
     }
 
@@ -579,7 +587,7 @@ impl Term {
         if !self.is_list() {
             Err(NotAList)
         } else {
-            self.unpair_ref()
+            Ok(self.unpair_ref().unwrap())
         }
     }
 
@@ -603,7 +611,7 @@ impl Term {
         if !self.is_list() {
             Err(NotAList)
         } else {
-            self.unpair_mut()
+            Ok(self.unpair_mut().unwrap())
         }
     }
 

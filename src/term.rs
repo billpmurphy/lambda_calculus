@@ -53,13 +53,7 @@ pub enum Error {
     /// the term is not an abstraction
     NotAnAbs,
     /// the term is not an application
-    NotAnApp,
-    /// the term is not a Church number
-    NotANum,
-    /// the term is not a Church pair
-    NotAPair,
-    /// the term is not a Church list
-    NotAList
+    NotAnApp
 }
 
 impl Term {

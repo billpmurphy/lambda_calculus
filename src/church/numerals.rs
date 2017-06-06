@@ -1,10 +1,18 @@
 //! [Church numerals](https://en.wikipedia.org/wiki/Church_encoding#Church_numerals)
 
-use term::{Term, Error, abs, app};
+use term::{Term, abs, app};
 use term::Term::*;
-use term::Error::*;
+use self::Error::*;
 use church::booleans::{tru, fls};
 use combinators::z;
+
+/// An error that can be returned when a method intended for a Church number is applied to something
+/// different.
+#[derive(Debug, PartialEq)]
+pub enum Error {
+    /// the term is not a Church number
+    NotANum
+}
 
 /// Produces a Church-encoded number zero.
 ///

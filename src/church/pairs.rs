@@ -1,9 +1,17 @@
 //! [Church pairs](https://en.wikipedia.org/wiki/Church_encoding#Church_pairs)
 
-use term::{Term, Error, abs};
+use term::{Term, abs};
 use term::Term::*;
-use term::Error::*;
+use self::Error::*;
 use church::booleans::{tru, fls};
+
+/// An error that can be returned when a method intended for a Church pair is applied to something
+/// different.
+#[derive(Debug, PartialEq)]
+pub enum Error {
+    /// the term is not a Church pair
+    NotAPair
+}
 
 /// Produces a Church-encoded pair; applying it to two other terms puts them inside it.
 ///
@@ -108,7 +116,11 @@ impl Term {
         let candidate = if let Abs(abstracted) = self { *abstracted } else { self };
 
         if let Ok((wrapped_a, b)) = candidate.unapp() {
-            Ok((try!(wrapped_a.rhs()), b))
+            if let Ok(a) = wrapped_a.rhs() {
+                Ok((a, b))
+            } else {
+                Err(NotAPair)
+            }
         } else {
             Err(NotAPair)
         }
@@ -135,7 +147,11 @@ impl Term {
         let candidate = if let Abs(ref abstracted) = *self { abstracted } else { self };
 
         if let Ok((wrapped_a, b)) = candidate.unapp_ref() {
-            Ok((try!(wrapped_a.rhs_ref()), b))
+            if let Ok(a) = wrapped_a.rhs_ref() {
+                Ok((a, b))
+            } else {
+                Err(NotAPair)
+            }
         } else {
             Err(NotAPair)
         }
@@ -162,7 +178,11 @@ impl Term {
         let mut candidate = if let Abs(ref mut abstracted) = *self { abstracted } else { self };
 
         if let Ok((wrapped_a, b)) = candidate.unapp_mut() {
-            Ok((try!(wrapped_a.rhs_mut()), b))
+            if let Ok(a) = wrapped_a.rhs_mut() {
+                Ok((a, b))
+            } else {
+                Err(NotAPair)
+            }
         } else {
             Err(NotAPair)
         }
