@@ -10,6 +10,8 @@
 //! * [the fixed-point combinators Y and Z](https://en.wikipedia.org/wiki/Fixed-point_combinator)
 //! * the reverse application combinator T
 
+#![allow(non_snake_case)]
+
 use term::{Term, abs, app};
 use term::Term::*;
 
@@ -19,12 +21,12 @@ use term::Term::*;
 ///
 /// # Example
 /// ```
-/// use lambda_calculus::combinators::i;
+/// use lambda_calculus::combinators::I;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(i().app(Var(1)), NOR, 0, false), Var(1));
+/// assert_eq!(beta(I().app(Var(1)), NOR, 0, false), Var(1));
 /// ```
-pub fn i() -> Term { abs(Var(1)) }
+pub fn I() -> Term { abs(Var(1)) }
 
 /// K - the constant / discarding combinator.
 ///
@@ -34,13 +36,13 @@ pub fn i() -> Term { abs(Var(1)) }
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::k;
+/// use lambda_calculus::combinators::K;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(k(), Var(1), Var(2)), NOR, 0, false), Var(1));
+/// assert_eq!(beta(app!(K(), Var(1), Var(2)), NOR, 0, false), Var(1));
 /// # }
 /// ```
-pub fn k() -> Term { abs(abs(Var(2))) }
+pub fn K() -> Term { abs(abs(Var(2))) }
 
 /// S - the substitution combinator.
 ///
@@ -50,15 +52,15 @@ pub fn k() -> Term { abs(abs(Var(2))) }
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::s;
+/// use lambda_calculus::combinators::S;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(s(), Var(1), Var(2), Var(3)              ), NOR, 0, false),
+/// assert_eq!(beta(app!(S(), Var(1), Var(2), Var(3)              ), NOR, 0, false),
 ///            beta(app!(     Var(1), Var(3), app!(Var(2), Var(3))), NOR, 0, false)
 /// );
 /// # }
 /// ```
-pub fn s() -> Term {
+pub fn S() -> Term {
     abs(abs(abs(
         app!(Var(3), Var(1), app(Var(2), Var(1)))
     )))
@@ -72,15 +74,16 @@ pub fn s() -> Term {
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::{iota, i, k, s};
+/// use lambda_calculus::combinators::{iota, I, K, S};
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(iota(), iota()), NOR, 0, false), i());
-/// assert_eq!(beta(app!(iota(), app!(iota(), app!(iota(), iota()))), NOR, 0, false), k());
-/// assert_eq!(beta(app!(iota(), app!(iota(), app!(iota(), app!(iota(), iota())))), NOR, 0, false), s());
+/// assert_eq!(beta(app!(iota(), iota()), NOR, 0, false), I());
+/// assert_eq!(beta(app!(iota(), app!(iota(), app!(iota(), iota()))), NOR, 0, false), K());
+/// assert_eq!(beta(app!(iota(), app!(iota(), app!(iota(), app!(iota(), iota())))), NOR, 0, false), S());
 /// # }
 /// ```
-pub fn iota() -> Term { abs(app!(Var(1), s(), k())) }
+// TODO[issue #28979]: change to ι
+pub fn iota() -> Term { abs(app!(Var(1), S(), K())) }
 
 /// B - the composition combinator.
 ///
@@ -90,15 +93,15 @@ pub fn iota() -> Term { abs(app!(Var(1), s(), k())) }
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::b;
+/// use lambda_calculus::combinators::B;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(b(), Var(1),      Var(2), Var(3) ), NOR, 0, false),
+/// assert_eq!(beta(app!(B(), Var(1),      Var(2), Var(3) ), NOR, 0, false),
 ///            beta(app!(     Var(1), app!(Var(2), Var(3))), NOR, 0, false)
 /// );
 /// # }
 /// ```
-pub fn b() -> Term {
+pub fn B() -> Term {
     abs(abs(abs(
         app(Var(3), app(Var(2), Var(1)))
     )))
@@ -112,15 +115,15 @@ pub fn b() -> Term {
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::c;
+/// use lambda_calculus::combinators::C;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(c(), Var(1), Var(2), Var(3)), NOR, 0, false),
+/// assert_eq!(beta(app!(C(), Var(1), Var(2), Var(3)), NOR, 0, false),
 ///            beta(app!(     Var(1), Var(3), Var(2)), NOR, 0, false)
 /// );
 /// # }
 /// ```
-pub fn c() -> Term {
+pub fn C() -> Term {
     abs(abs(abs(
         app!(Var(3), Var(1), Var(2))
     )))
@@ -134,15 +137,15 @@ pub fn c() -> Term {
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::w;
+/// use lambda_calculus::combinators::W;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(   w(), Var(1), Var(2)), NOR, 0, false),
+/// assert_eq!(beta(app!(   W(), Var(1), Var(2)), NOR, 0, false),
 ///            beta(app!(Var(1), Var(2), Var(2)), NOR, 0, false)
 /// );
 /// # }
 /// ```
-pub fn w() -> Term {
+pub fn W() -> Term {
     abs(abs(
         app!(Var(2), Var(1), Var(1))
     ))
@@ -151,7 +154,7 @@ pub fn w() -> Term {
 /// U - the recursion combinator.
 ///
 /// U := λxy.y (x x y) = λ λ 1 (2 2 1)
-pub fn u() -> Term { abs(abs(Var(1).app(Var(2).app(Var(2)).app(Var(1))))) }
+pub fn U() -> Term { abs(abs(Var(1).app(Var(2).app(Var(2)).app(Var(1))))) }
 */
 /// ω - the self-application combinator.
 ///
@@ -166,6 +169,7 @@ pub fn u() -> Term { abs(abs(Var(1).app(Var(2).app(Var(2)).app(Var(1))))) }
 ///            beta(Var(1).app(Var(1)), NOR, 0, false)
 /// );
 /// ```
+// TODO[issue #28979]: change to ω
 pub fn om() -> Term { abs(Var(1).app(Var(1))) }
 
 /// Ω - the divergent combinator.
@@ -174,12 +178,13 @@ pub fn om() -> Term { abs(Var(1).app(Var(1))) }
 ///
 /// # Example
 /// ```
-/// use lambda_calculus::combinators::omm;
+/// use lambda_calculus::combinators::OM;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(omm(), NOR, 3, false), omm());
+/// assert_eq!(beta(OM(), NOR, 3, false), OM());
 /// ```
-pub fn omm() -> Term { om().app(om()) }
+// TODO[issue #28979]: change to Ω
+pub fn OM() -> Term { om().app(om()) }
 
 /// Y - the lazy fixed-point combinator.
 ///
@@ -192,17 +197,17 @@ pub fn omm() -> Term { om().app(om()) }
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::y;
+/// use lambda_calculus::combinators::Y;
 /// use lambda_calculus::*;
 ///
 /// fn dummy() -> Term { abs(Var(2)) } // a dummy term that won't easily reduce
 ///
-/// assert_eq!(beta(              app!(y(), dummy() ), NOR, 0, false),
-///            beta(app!(dummy(), app!(y(), dummy())), NOR, 0, false)
+/// assert_eq!(beta(              app!(Y(), dummy() ), NOR, 0, false),
+///            beta(app!(dummy(), app!(Y(), dummy())), NOR, 0, false)
 /// );
 /// # }
 /// ```
-pub fn y() -> Term {
+pub fn Y() -> Term {
     abs(app(
         abs(app(Var(2), app(Var(1), Var(1)))),
         abs(app(Var(2), app(Var(1), Var(1))))
@@ -223,17 +228,17 @@ pub fn y() -> Term {
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::z;
+/// use lambda_calculus::combinators::Z;
 /// use lambda_calculus::*;
 ///
 /// fn dummy() -> Term { abs(Var(2)) } // a dummy term that won't easily reduce
 ///
-/// assert_eq!(beta(              app!(z(), dummy() ), CBV, 0, false),
-///            beta(app!(dummy(), app!(z(), dummy())), CBV, 0, false)
+/// assert_eq!(beta(              app!(Z(), dummy() ), CBV, 0, false),
+///            beta(app!(dummy(), app!(Z(), dummy())), CBV, 0, false)
 /// );
 /// # }
 /// ```
-pub fn z() -> Term {
+pub fn Z() -> Term {
     abs(app(
         abs(app(Var(2), abs(app!(Var(2), Var(2), Var(1))))),
         abs(app(Var(2), abs(app!(Var(2), Var(2), Var(1)))))
@@ -248,15 +253,15 @@ pub fn z() -> Term {
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::t;
+/// use lambda_calculus::combinators::T;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(t(), Var(1), Var(2)), NOR, 0, false),
+/// assert_eq!(beta(app!(T(), Var(1), Var(2)), NOR, 0, false),
 ///                 app!(     Var(2), Var(1))
 /// );
 /// # }
 /// ```
-pub fn t() -> Term {
+pub fn T() -> Term {
     abs(abs(
         app(Var(1), Var(2))
     ))

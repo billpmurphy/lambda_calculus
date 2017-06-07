@@ -5,7 +5,7 @@ use term::Term::*;
 use church::booleans::{tru, fls};
 use church::ChurchError;
 use church::ChurchError::*;
-use combinators::z;
+use combinators::Z;
 
 /// Produces a Church-encoded number zero.
 ///
@@ -461,7 +461,7 @@ pub fn gt() -> Term {
 /// ```
 pub fn div() -> Term {
     app!(
-        z(),
+        Z(),
         abs(abs(abs(abs(app!(
             Var(2),
             abs(abs(abs(app!(
@@ -521,7 +521,7 @@ pub fn div() -> Term {
 /// ```
 pub fn quot() -> Term {
     app(
-        z(),
+        Z(),
         abs(abs(abs(app!(
             Var(2),
             abs(abs(abs(app!(
@@ -580,7 +580,7 @@ pub fn quot() -> Term {
 /// ```
 pub fn rem() -> Term {
     app(
-        z(),
+        Z(),
         abs(abs(abs(app!(
             Var(2),
             abs(abs(abs(app!(
@@ -708,7 +708,7 @@ mod tests {
     use super::*;
     use reduction::beta;
     use reduction::Order::*;
-    use combinators::c;
+    use combinators::C;
 
     #[test]
     fn church_invalid_nums() {
@@ -764,16 +764,16 @@ mod tests {
     fn church_plus_sub_equivalents() {
         /* PLUS 1 → SUCC & C SUB 1 → PRED */
         assert_eq!(beta(app!(    plus(), 1.into()), NOR, 0, false), succ());
-        assert_eq!(beta(app!(c(), sub(), 1.into()), NOR, 0, false), pred());
+        assert_eq!(beta(app!(C(), sub(), 1.into()), NOR, 0, false), pred());
 
         assert_eq!(beta(app!(    plus(), 1.into()), HNO, 0, false), succ());
-        assert_eq!(beta(app!(c(), sub(), 1.into()), HNO, 0, false), pred());
+        assert_eq!(beta(app!(C(), sub(), 1.into()), HNO, 0, false), pred());
 
         assert_eq!(beta(app!(    plus(), 1.into()), APP, 0, false), succ());
-        assert_eq!(beta(app!(c(), sub(), 1.into()), APP, 0, false), pred());
+        assert_eq!(beta(app!(C(), sub(), 1.into()), APP, 0, false), pred());
 
         assert_eq!(beta(app!(    plus(), 1.into()), HAP, 0, false), succ());
-        assert_eq!(beta(app!(c(), sub(), 1.into()), HAP, 0, false), pred());
+        assert_eq!(beta(app!(C(), sub(), 1.into()), HAP, 0, false), pred());
     }
 
     #[test]
