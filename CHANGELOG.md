@@ -1,3 +1,13 @@
+Version 2.0.0
+=============
+
+Changes (all breaking)
+-------
+
+- move Church-related variants of `term::Error` to `church::ChurchError`
+- rename `term::Error` to `term::TermError`
+- make most combinator functions uppercase
+
 Version 1.1.0
 =============
 
