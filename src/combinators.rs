@@ -4,7 +4,6 @@
 //! * [SKI](https://en.wikipedia.org/wiki/SKI_combinator_calculus)
 //! * [Iota](https://en.wikipedia.org/wiki/Iota_and_Jot)
 //! * [BCKW](https://en.wikipedia.org/wiki/B,_C,_K,_W_system)
-// //! * the recursion combinator U - needs more research
 //! * the self-application combinator ω
 //! * the divergent combinator Ω
 //! * [the fixed-point combinators Y and Z](https://en.wikipedia.org/wiki/Fixed-point_combinator)
@@ -74,16 +73,16 @@ pub fn S() -> Term {
 /// ```
 /// # #[macro_use] extern crate lambda_calculus;
 /// # fn main() {
-/// use lambda_calculus::combinators::{iota, I, K, S};
+/// use lambda_calculus::combinators::{i, I, K, S};
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(app!(iota(), iota()), NOR, 0, false), I());
-/// assert_eq!(beta(app!(iota(), app!(iota(), app!(iota(), iota()))), NOR, 0, false), K());
-/// assert_eq!(beta(app!(iota(), app!(iota(), app!(iota(), app!(iota(), iota())))), NOR, 0, false), S());
+/// assert_eq!(beta(app!(i(), i()), NOR, 0, false), I());
+/// assert_eq!(beta(app!(i(), app!(i(), app!(i(), i()))), NOR, 0, false), K());
+/// assert_eq!(beta(app!(i(), app!(i(), app!(i(), app!(i(), i())))), NOR, 0, false), S());
 /// # }
 /// ```
 // TODO[issue #28979]: change to ι
-pub fn iota() -> Term { abs(app!(Var(1), S(), K())) }
+pub fn i() -> Term { abs(app!(Var(1), S(), K())) }
 
 /// B - the composition combinator.
 ///
@@ -150,27 +149,22 @@ pub fn W() -> Term {
         app!(Var(2), Var(1), Var(1))
     ))
 }
-/*
-/// U - the recursion combinator.
-///
-/// U := λxy.y (x x y) = λ λ 1 (2 2 1)
-pub fn U() -> Term { abs(abs(Var(1).app(Var(2).app(Var(2)).app(Var(1))))) }
-*/
+
 /// ω - the self-application combinator.
 ///
 /// ω := λx.x x = λ 1 1
 ///
 /// # Example
 /// ```
-/// use lambda_calculus::combinators::om;
+/// use lambda_calculus::combinators::o;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(  om().app(Var(1)), NOR, 0, false),
+/// assert_eq!(beta(   o().app(Var(1)), NOR, 0, false),
 ///            beta(Var(1).app(Var(1)), NOR, 0, false)
 /// );
 /// ```
 // TODO[issue #28979]: change to ω
-pub fn om() -> Term { abs(Var(1).app(Var(1))) }
+pub fn o() -> Term { abs(Var(1).app(Var(1))) }
 
 /// Ω - the divergent combinator.
 ///
@@ -178,13 +172,13 @@ pub fn om() -> Term { abs(Var(1).app(Var(1))) }
 ///
 /// # Example
 /// ```
-/// use lambda_calculus::combinators::OM;
+/// use lambda_calculus::combinators::O;
 /// use lambda_calculus::*;
 ///
-/// assert_eq!(beta(OM(), NOR, 3, false), OM());
+/// assert_eq!(beta(O(), NOR, 3, false), O());
 /// ```
 // TODO[issue #28979]: change to Ω
-pub fn OM() -> Term { om().app(om()) }
+pub fn O() -> Term { o().app(o()) }
 
 /// Y - the lazy fixed-point combinator.
 ///

@@ -401,7 +401,7 @@ mod tests {
     use term::{abs, app};
     use term::Notation::*;
     use parser::parse;
-    use combinators::{I, OM};
+    use combinators::{I, O};
     use std::thread;
 
     #[test]
@@ -414,7 +414,7 @@ mod tests {
         let should_reduce = parse(&"(λ2)((λ111)(λ111))", DeBruijn).unwrap();
         assert_eq!(beta(should_reduce, NOR, 0, false), Var(1));
 
-        let does_reduce = app(abs(Var(2)), OM());
+        let does_reduce = app(abs(Var(2)), O());
         assert_eq!(beta(does_reduce, NOR, 0, false), Var(1));
     }
 
@@ -431,9 +431,9 @@ mod tests {
 
     #[test]
     fn applicative_order() {
-        let mut wont_reduce = app(abs(Var(2)), OM());
+        let mut wont_reduce = app(abs(Var(2)), O());
         wont_reduce.beta(APP, 3, false);
-        assert_eq!(wont_reduce, app(abs(Var(2)), OM()));
+        assert_eq!(wont_reduce, app(abs(Var(2)), O()));
     }
 
     #[test]
